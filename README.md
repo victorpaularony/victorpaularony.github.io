@@ -1,8 +1,8 @@
 
-<h2 align='center'><i>⚡  Hi there 👋, I'm Brian Oiko </i></h2>
+<h2 align='center'><i>⚡  Hi there 👋, I'm Victor Paul Arony</i></h2>
 
 # About Me
-Brian Oiko is a software developer with experience in the tech industry with a background in fronted, backend and smart contract development, he has build an DEX hybrid platform for Ksh to Sui currency. Currently Arony works at zone01 kisumu where he is a Fullstack developer using language like Go, Java and JavaScript. In addition to that he is passionate and enthusiastic about the cryptography and blockchain technology.
+Victor Paul Arony is a software developer with experience in the tech industry with a background in fronted, backend and smart contract development, he has build an DEX hybrid platform for Ksh to Sui currency. Arony was a Fullstack developer at zone01 kisumu using language like Go, Java and JavaScript. He is currently working as an ICT Support Officer at KETRACO Ltd (Kenya Electricity Transmission Company Limited). In addition to that he is passionate and enthusiastic about the cryptography and blockchain technology. I am a quick learner and a team player, and I am always looking for new challenges to grow my skills and knowledge
 
 ## 🛠️ Skills and Technologies
 - **Languages**: 
@@ -22,8 +22,12 @@ Brian Oiko is a software developer with experience in the tech industry with a b
   - Contributed to the development of various software projects, gaining hands-on experience with modern programming languages and development tools.
   - Collaborated with senior developers and participated in code reviews, improving code quality and learning best practices.
   - Assisted in the design and implementation of new features and functionalities for web and mobile applications.
-  - Participated in team meetings and brainstorming sessions, providing input on project requirements and technical solutions.
-  - Engaged in continuous learning and professional development, staying updated with the latest industry trends and technologies.
+
+  - [ICT Support Officer](https://www.ketraco.co.ke/)
+  - **ICT Support Officer at KETRACO Ltd**
+    - Contributed to the development of various software projects, gaining hands-on experience with modern programming languages and development tools.
+    - Collaborated with senior developers and participated in code reviews, improving code quality and learning best practices.
+    - Assisted in the design and implementation of new features and functionalities for web and mobile applications.
 
 
 ## 📊 Top Languages

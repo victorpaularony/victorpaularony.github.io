@@ -216,6 +216,7 @@ async function aggregateLanguages(repos) {
     }));
   }
 
+  const MIN_PERCENT = 65; // Experience floor: even low commit counts show proficiency
   const maxCount = Math.max(...Object.values(langCommits), 0);
   let total = Object.values(langCommits).reduce((s, v) => s + v, 0);
 
@@ -231,20 +232,20 @@ async function aggregateLanguages(repos) {
 
     return Object.entries(langCommits)
       .sort((a, b) => b[1] - a[1])
-      .map(([lang, count]) => ({
-        lang,
-        count,
-        percent: Math.round((count / fallbackMax) * 100)
-      }));
+      .map(([lang, count]) => {
+        const ratio = fallbackMax > 0 ? count / fallbackMax : 0;
+        const percent = Math.round(MIN_PERCENT + (100 - MIN_PERCENT) * ratio);
+        return { lang, count, percent };
+      });
   }
 
   return Object.entries(langCommits)
     .sort((a, b) => b[1] - a[1])
-    .map(([lang, count]) => ({
-      lang,
-      count,
-      percent: Math.round((count / maxCount) * 100)
-    }));
+    .map(([lang, count]) => {
+      const ratio = maxCount > 0 ? count / maxCount : 0;
+      const percent = Math.round(MIN_PERCENT + (100 - MIN_PERCENT) * ratio);
+      return { lang, count, percent };
+    });
 }
 
 // ── Render "USING NOW" language icon grid ─────────────────────────────────────

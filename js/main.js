@@ -64,6 +64,27 @@ function prettyName(name) {
   return name.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
+async function getCommitCount(repoName) {
+  try {
+    // We use per_page=1 and check the Link header to get the total number of commits
+    const res = await fetch(`${GITHUB_API}/repos/${GITHUB_USERNAME}/${repoName}/commits?author=${GITHUB_USERNAME}&per_page=1`);
+    if (!res.ok) return 0;
+
+    const link = res.headers.get('Link');
+    if (!link) {
+      // If there's no link header, there's either 1 page of results or none.
+      // Check the body to be sure.
+      const commits = await res.json();
+      return commits.length;
+    }
+
+    const match = link.match(/&page=(\d+)>; rel="last"/);
+    return match ? parseInt(match[1]) : 1;
+  } catch (err) {
+    return 0;
+  }
+}
+
 // ── Render GitHub profile into About section ──────────────────────────────────
 function renderProfile(p) {
   const avatar = document.getElementById('gh-avatar');
@@ -155,8 +176,8 @@ function renderProjects(repos) {
           <span class="repo-lang-dot"></span>
           <span class="repo-lang-name">${lang}</span>
           ${repo.stargazers_count > 0
-            ? `<span class="repo-stars"><i class="fas fa-star"></i> ${repo.stargazers_count}</span>`
-            : ''}
+        ? `<span class="repo-stars"><i class="fas fa-star"></i> ${repo.stargazers_count}</span>`
+        : ''}
         </div>
         <div class="repo-body">
           <h3>${prettyName(repo.name)}</h3>
@@ -179,14 +200,36 @@ function renderProjects(repos) {
 }
 
 // ── Aggregate language usage from repos ───────────────────────────────────────
-function aggregateLanguages(repos) {
-  const counts = {};
-  repos
-    .filter(r => !r.fork && r.language)
-    .forEach(r => { counts[r.language] = (counts[r.language] || 0) + 1; });
+async function aggregateLanguages(repos) {
+  const langCommits = {};
+  const MAX_REPOS = 30; // Limit to stay within GitHub's unauthenticated rate limit
 
-  const total = Object.values(counts).reduce((s, v) => s + v, 0);
-  return Object.entries(counts)
+  const relevantRepos = repos.filter(r => !r.fork && r.language).slice(0, MAX_REPOS);
+
+  // Fetch commit counts for relevant repos in parallel (small batches to be safe)
+  const BATCH_SIZE = 10;
+  for (let i = 0; i < relevantRepos.length; i += BATCH_SIZE) {
+    const batch = relevantRepos.slice(i, i + BATCH_SIZE);
+    await Promise.all(batch.map(async (repo) => {
+      const count = await getCommitCount(repo.name);
+      langCommits[repo.language] = (langCommits[repo.language] || 0) + count;
+    }));
+  }
+
+  let total = Object.values(langCommits).reduce((s, v) => s + v, 0);
+
+  // Fallback: If we couldn't get any commit data (likely rate limit), 
+  // fall back to counting repositories.
+  if (total === 0) {
+    repos
+      .filter(r => !r.fork && r.language)
+      .forEach(r => { langCommits[r.language] = (langCommits[r.language] || 0) + 1; });
+    total = Object.values(langCommits).reduce((s, v) => s + v, 0);
+  }
+
+  if (total === 0) return [];
+
+  return Object.entries(langCommits)
     .sort((a, b) => b[1] - a[1])
     .map(([lang, count]) => ({
       lang,
@@ -206,8 +249,8 @@ function renderLanguageGrid(langs) {
     return `
       <div class="grid-item">
         ${icon
-          ? `<i class="devicon-${icon}-plain colored skill-icon"></i>`
-          : `<span class="lang-dot-large" style="background:${color}"></span>`}
+        ? `<i class="devicon-${icon}-plain colored skill-icon"></i>`
+        : `<span class="lang-dot-large" style="background:${color}"></span>`}
         <h6>${lang}</h6>
       </div>
     `;
@@ -219,7 +262,7 @@ function renderSkillBars(langs) {
   const container = document.getElementById('tech-skills-bars');
   if (!container) return;
 
-  container.innerHTML = langs.slice(0, 4).map(({ lang, percent }) => {
+  container.innerHTML = langs.slice(0, 6).map(({ lang, percent }) => {
     return `
       <div class="prgs-bar">
         <span>${lang}</span>
@@ -242,7 +285,7 @@ async function loadGitHubData() {
       ghFetch(`/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=50`)
     ]);
 
-    const langs = aggregateLanguages(repos);
+    const langs = await aggregateLanguages(repos);
 
     renderProfile(profile);
     renderProjects(repos);

@@ -27,7 +27,7 @@ body::before {
     position: fixed;
     inset: 0;
     background: var(--profile-bg, url('../images/profile.svg')) no-repeat center center / cover;
-    filter: blur(2px) brightness(0.2);
+    filter: blur(2px) brightness(0.25);
     opacity: 0.4;
     z-index: -1;
     transform: scale(1.05);

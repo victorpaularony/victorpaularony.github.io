@@ -216,6 +216,7 @@ async function aggregateLanguages(repos) {
     }));
   }
 
+  const maxCount = Math.max(...Object.values(langCommits), 0);
   let total = Object.values(langCommits).reduce((s, v) => s + v, 0);
 
   // Fallback: If we couldn't get any commit data (likely rate limit), 
@@ -224,17 +225,25 @@ async function aggregateLanguages(repos) {
     repos
       .filter(r => !r.fork && r.language)
       .forEach(r => { langCommits[r.language] = (langCommits[r.language] || 0) + 1; });
-    total = Object.values(langCommits).reduce((s, v) => s + v, 0);
-  }
 
-  if (total === 0) return [];
+    const fallbackMax = Math.max(...Object.values(langCommits), 0);
+    if (fallbackMax === 0) return [];
+
+    return Object.entries(langCommits)
+      .sort((a, b) => b[1] - a[1])
+      .map(([lang, count]) => ({
+        lang,
+        count,
+        percent: Math.round((count / fallbackMax) * 100)
+      }));
+  }
 
   return Object.entries(langCommits)
     .sort((a, b) => b[1] - a[1])
     .map(([lang, count]) => ({
       lang,
       count,
-      percent: Math.round((count / total) * 100)
+      percent: Math.round((count / maxCount) * 100)
     }));
 }
 

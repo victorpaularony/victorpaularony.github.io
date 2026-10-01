@@ -26,7 +26,7 @@ body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: var(--profile-bg, url('../images/profilepic.jpg')) no-repeat center center / cover;
+    background: var(--profile-bg, url('../images/CKS02612.jpg')) no-repeat center center / cover;
     filter: blur(2px) brightness(0.25);
     opacity: 0.4;
     z-index: -1;
@@ -73,15 +73,15 @@ body::before {
     margin-bottom: 18px;
     transition: transform 0.3s, box-shadow 0.3s;
     box-shadow: 0 0 0 6px rgba(57, 255, 20, 0.15),
-                0 0 30px rgba(57, 255, 20, 0.5),
-                0 0 60px rgba(57, 255, 20, 0.2);
+        0 0 30px rgba(57, 255, 20, 0.5),
+        0 0 60px rgba(57, 255, 20, 0.2);
 }
 
 .gh-avatar:hover {
     transform: scale(1.05);
     box-shadow: 0 0 0 8px rgba(57, 255, 20, 0.2),
-                0 0 40px rgba(57, 255, 20, 0.7),
-                0 0 80px rgba(57, 255, 20, 0.3);
+        0 0 40px rgba(57, 255, 20, 0.7),
+        0 0 80px rgba(57, 255, 20, 0.3);
 }
 
 .profile-name {
@@ -620,7 +620,9 @@ body::before {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .gh-error {
